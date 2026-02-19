@@ -8,48 +8,65 @@
         :root { --bg: #1c1c1c; --panel: #2d2d2d; --accent: #007acc; --text: #e0e0e0; --border: #121212; --code: #1e1e1e; --export: #28a745; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: var(--text); font-family: sans-serif; display: flex; overflow: hidden; position: fixed; }
+        
         #hierarchy { width: 120px; height: 100%; background: var(--panel); border-right: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
         #main-view { flex: 1; height: 100%; display: flex; flex-direction: column; position: relative; overflow: hidden; }
         #inspector { width: 180px; height: 100%; background: var(--panel); border-left: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
         #toolbar { height: 48px; background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 8px; gap: 4px; flex-shrink: 0; overflow-x: auto; }
+        
         #viewport { flex: 1; position: relative; background: #000; overflow: hidden; }
         canvas { display: block; width: 100% !important; height: 100% !important; }
+
         .header { background: var(--border); padding: 8px; font-size: 9px; font-weight: bold; color: #888; text-transform: uppercase; position: sticky; top: 0; z-index: 60; }
         .tool-btn { flex: 1; padding: 8px 2px; background: #444; border: 1px solid #555; color: white; cursor: pointer; border-radius: 4px; font-size: 8px; font-weight: bold; min-width: 50px; }
         .tool-btn.active { background: var(--accent) !important; }
         .export-btn { background: var(--export); border-color: #34ce57; }
+        
         .spawn-btn { width: 100%; padding: 10px; margin-bottom: 5px; background: #444; color: white; border: 1px solid #555; cursor: pointer; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .spawn-btn.char-btn { background: #6a1b9a; border-color: #8e24aa; }
         .spawn-btn.jump-btn-spawn { background: #007acc; border-color: #005f99; }
         .spawn-btn.fx-btn { background: #e67e22; border-color: #d35400; }
         .spawn-btn.terrain-btn { background: #27ae60; border-color: #1e8449; }
+        
         #script-area { width: 100%; height: 80px; background: var(--code); color: #9cdcfe; border: 1px solid #111; font-family: monospace; font-size: 10px; padding: 8px; margin-top: 5px; resize: none; }
         .list-item { padding: 12px; font-size: 10px; border-bottom: 1px solid #333; cursor: pointer; }
         .selected-item { background: var(--accent) !important; }
+
         .prop-label { font-size: 9px; color: #888; display: block; margin-top: 8px; font-weight: bold; }
         input[type="range"] { width: 100%; accent-color: var(--accent); }
         select, input[type="text"] { width: 100%; background: #111; color: #fff; border: 1px solid #444; padding: 4px; font-size: 10px; border-radius: 2px; }
+
         #joy-container { position: absolute; bottom: 40px; left: 40px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%; display: none; touch-action: none; border: 2px solid rgba(255,255,255,0.2); z-index: 1000; }
         #joy-knob { width: 40px; height: 40px; background: var(--accent); border-radius: 50%; position: absolute; top: 30px; left: 30px; pointer-events: none; }
         #jump-btn-ui { position: absolute; bottom: 40px; right: 40px; width: 70px; height: 70px; background: rgba(0, 122, 204, 0.5); border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; color: white; font-weight: bold; font-size: 12px; display: none; align-items: center; justify-content: center; z-index: 1000; touch-action: none; user-select: none; }
+
         #start-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; color: white; cursor: pointer; }
+
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
     </style>
 </head>
 <body>
-    <div id="start-overlay"><h1 style="margin:0">TAP TO START</h1></div>
-    <div id="hierarchy"><div class="header">Hierarchy</div><div id="entity-list"></div></div>
+
+    <div id="start-overlay">
+        <h1 style="margin:0">TAP TO START</h1>
+    </div>
+
+    <div id="hierarchy">
+        <div class="header">Hierarchy</div>
+        <div id="entity-list"></div>
+    </div>
+
     <div id="main-view">
         <div id="toolbar">
-            <button class="tool-btn active" id="btn-translate" onclick="window['\x5f\x30\x78\x61\x31']('translate')">MOVE</button>
-            <button class="tool-btn" id="btn-rotate" onclick="window['\x5f\x30\x78\x61\x31']('rotate')">ROT</button>
-            <button class="tool-btn" id="btn-scale" onclick="window['\x5f\x30\x78\x61\x31']('scale')">SCL</button>
-            <button class="tool-btn" onclick="window['\x5f\x30\x78\x62\x32']()">COPY</button>
-            <button class="tool-btn" onclick="window['\x5f\x30\x78\x62\x33']()">PASTE</button>
-            <button class="tool-btn" onclick="window['\x5f\x30\x78\x62\x34']()">DUPE</button>
-            <button class="tool-btn" id="btn-joy-toggle" onclick="window['\x5f\x30\x78\x61\x32']()">JOYSTICK</button>
-            <button class="tool-btn export-btn" onclick="window['\x5f\x30\x78\x65\x78']()">EXPORT APK</button>
+            <button class="tool-btn active" id="btn-translate" onclick="window.setTool('translate')">MOVE</button>
+            <button class="tool-btn" id="btn-rotate" onclick="window.setTool('rotate')">ROT</button>
+            <button class="tool-btn" id="btn-scale" onclick="window.setTool('scale')">SCL</button>
+            <button class="tool-btn" onclick="window.copyObj()">COPY</button>
+            <button class="tool-btn" onclick="window.pasteObj()">PASTE</button>
+            <button class="tool-btn" onclick="window.duplicateObj()">DUPE</button>
+            <button class="tool-btn" id="btn-joy-toggle" onclick="window.toggleJoy()">JOYSTICK</button>
+            <button class="tool-btn export-btn" onclick="window.exportProject()">EXPORT APK</button>
         </div>
         <div id="viewport" onclick="if(window.resumeAudio) window.resumeAudio()">
             <canvas id="scene-canvas"></canvas>
@@ -57,28 +74,31 @@
             <div id="jump-btn-ui">JUMP</div>
         </div>
     </div>
+
     <div id="inspector">
         <div class="header">Project</div>
         <div style="padding: 10px;">
             <input type="text" id="proj-name" placeholder="Project Name...">
-            <button class="spawn-btn" style="margin-top:5px; background:var(--accent);" onclick="window['\x5f\x30\x78\x73\x76']()">SAVE PROJECT</button>
-            <button class="spawn-btn" style="background:#555;" onclick="window['\x5f\x30\x78\x6c\x64']()">LOAD PROJECT</button>
+            <button class="spawn-btn" style="margin-top:5px; background:var(--accent);" onclick="window.saveProj()">SAVE PROJECT</button>
+            <button class="spawn-btn" style="background:#555;" onclick="window.loadProj()">LOAD PROJECT</button>
         </div>
+
         <div class="header">Environment</div>
         <div style="padding: 10px;">
             <span class="prop-label">SKY STYLE</span>
-            <select id="sky-type" onchange="window['\x5f\x30\x78\x65\x31']()">
+            <select id="sky-type" onchange="window.updateEnv()">
                 <option value="0xd9efff">Default Blue</option>
                 <option value="0x000015">Space</option>
                 <option value="0xff7700">Sunset</option>
                 <option value="0x444444">Cloudy</option>
             </select>
             <span class="prop-label">SUN COLOR</span>
-            <input type="color" id="sun-clr" value="#ffffff" oninput="window['\x5f\x30\x78\x65\x32'](this.value)">
+            <input type="color" id="sun-clr" value="#ffffff" oninput="window.updateSun(this.value)">
             <span class="prop-label">FOG INTENSITY</span>
-            <input type="range" min="0" max="0.1" step="0.001" value="0" oninput="window['\x5f\x30\x78\x65\x33'](this.value)">
-            <button class="spawn-btn" style="margin-top:10px;" onclick="window['\x5f\x30\x78\x65\x34']()">TOGGLE SHADOWS</button>
+            <input type="range" min="0" max="0.1" step="0.001" value="0" oninput="window.updateFog(this.value)">
+            <button class="spawn-btn" style="margin-top:10px;" onclick="window.toggleShadows()">TOGGLE SHADOWS</button>
         </div>
+
         <div class="header">Spawn</div>
         <div style="padding: 10px;">
             <button class="spawn-btn char-btn" onclick="window.spawn('Character')">+ CHARACTER</button>
@@ -89,8 +109,10 @@
             <button class="spawn-btn" onclick="window.spawn('PointLight')" style="background:#f1c40f; color:#000;">+ POINT LIGHT</button>
             <button class="spawn-btn jump-btn-spawn" onclick="window.spawn('JumpButton')">+ JUMP BUTTON</button>
         </div>
+
         <div id="transform-panel" style="display:none; padding: 10px; border-top: 1px solid #444;">
             <p id="sel-name" style="color:var(--accent); font-weight:bold; font-size: 11px; margin: 0 0 10px 0;"></p>
+            
             <div id="terrain-controls" style="display:none; background: #222; padding: 8px; border-radius: 4px; margin-bottom: 10px;">
                 <span class="prop-label" style="color:#27ae60">TERRAIN SCULPT MODE</span>
                 <select id="sculpt-mode">
@@ -101,337 +123,605 @@
                 <span class="prop-label">BRUSH RADIUS</span>
                 <input type="range" id="sculpt-radius" min="0.5" max="10" step="0.1" value="4">
             </div>
+
             <div id="fx-controls" style="display:none; background: #222; padding: 8px; border-radius: 4px; margin-bottom: 10px;">
                 <span class="prop-label" style="color:#e67e22">PARTICLE TYPE</span>
-                <select id="fx-type" onchange="window['\x5f\x30\x78\x66\x78'](this.value)">
+                <select id="fx-type" onchange="window.updateFX(this.value)">
                     <option value="fire">Fire</option>
                     <option value="smoke">Smoke</option>
                     <option value="sparkles">Sparkles</option>
                 </select>
             </div>
+
             <div id="asset-browser-contextual">
                 <div class="header" style="margin: 0 -10px 10px -10px;">Asset Browser</div>
                 <span class="prop-label">TEXTURE URL</span>
-                <input type="text" id="asset-tex-url" placeholder="Paste .jpg/.png link" onchange="window['\x5f\x30\x78\x74\x78'](this.value)">
+                <input type="text" id="asset-tex-url" placeholder="Paste .jpg/.png link" onchange="window.applyTexture(this.value)">
                 <span class="prop-label">MODEL URL</span>
-                <input type="text" id="asset-model-url" placeholder="Paste .glb link" onchange="window['\x5f\x30\x78\x6d\x64'](this.value)">
+                <input type="text" id="asset-model-url" placeholder="Paste .glb link" onchange="window.applyModel(this.value)">
             </div>
+
             <span class="prop-label">PHYSICS MODE</span>
-            <select id="physics-mode" onchange="window['\x5f\x30\x78\x70\x68'](this.value)">
+            <select id="physics-mode" onchange="window.updatePhysicsMode(this.value)">
                 <option value="static">Static (Wall)</option>
                 <option value="dynamic">Dynamic (Gravity)</option>
             </select>
+
             <span class="prop-label">ON TOUCH (TRIGGER)</span>
-            <select id="trigger-mode" onchange="window['\x5f\x30\x78\x74\x72'](this.value)">
+            <select id="trigger-mode" onchange="window.updateTrigger(this.value)">
                 <option value="none">None</option>
                 <option value="warp">Warp to Start</option>
                 <option value="collect">Collect (Explosion)</option>
             </select>
+
             <span class="prop-label">SCALE (UNIFORM)</span>
-            <input type="range" min="0.1" max="10" step="0.1" value="1" oninput="window['\x5f\x30\x78\x74\x66']('scale', this.value)">
+            <input type="range" min="0.1" max="10" step="0.1" value="1" oninput="window.updateTransform('scale', this.value)">
+            
             <span class="prop-label">ROTATION Y</span>
-            <input type="range" min="0" max="6.28" step="0.1" value="0" oninput="window['\x5f\x30\x78\x74\x66']('rotY', this.value)">
+            <input type="range" min="0" max="6.28" step="0.1" value="0" oninput="window.updateTransform('rotY', this.value)">
+
             <span class="prop-label">TRANSPARENCY</span>
             <div style="display: flex; gap: 5px; align-items: center;">
-                <input type="text" id="transparency-input" value="0" style="width: 40px;" onchange="window['\x5f\x30\x78\x74\x70'](this.value)">
-                <input type="range" id="transparency-slider" min="0" max="1" step="0.01" value="0" oninput="window['\x5f\x30\x78\x74\x70'](this.value)">
+                <input type="text" id="transparency-input" value="0" style="width: 40px;" onchange="window.updateTransparency(this.value)">
+                <input type="range" id="transparency-slider" min="0" max="1" step="0.01" value="0" oninput="window.updateTransparency(this.value)">
             </div>
+
             <span class="prop-label">AUDIO SOURCE</span>
-            <input type="file" id="audio-upload" accept="audio/*" style="display:none" onchange="window['\x5f\x30\x78\x61\x75'](this)">
+            <input type="file" id="audio-upload" accept="audio/*" style="display:none" onchange="window.handleAudioUpload(this)">
             <button class="spawn-btn" style="background:#444; margin-bottom:5px;" onclick="document.getElementById('audio-upload').click()">UPLOAD MP3/WAV</button>
-            <button class="spawn-btn" style="background:#822; margin-bottom:5px; font-size:9px;" onclick="window['\x5f\x30\x78\x75\x61']('')">DELETE AUDIO</button>
+            <button class="spawn-btn" style="background:#822; margin-bottom:5px; font-size:9px;" onclick="window.updateAudio('')">DELETE AUDIO</button>
+            
             <span class="prop-label">AUDIO PLAY MODE</span>
-            <select id="audio-mode" onchange="window['\x5f\x30\x78\x61\x6d'](this.value)">
+            <select id="audio-mode" onchange="window.updateAudioMode(this.value)">
                 <option value="spatial">Spatial (Distance)</option>
                 <option value="touch">On Touch</option>
             </select>
             <div style="margin: 5px 0; display: flex; flex-direction: column; gap: 4px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="prop-label" style="margin:0;">LOOP AUDIO</span>
-                    <input type="checkbox" id="audio-loop" onchange="window['\x5f\x30\x78\x61\x6c'](this.checked)">
+                    <input type="checkbox" id="audio-loop" onchange="window.updateAudioLoop(this.checked)">
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="prop-label" style="margin:0;">PLAY ON LOAD</span>
-                    <input type="checkbox" id="audio-onload" onchange="window['\x5f\x30\x78\x61\x6f'](this.checked)">
+                    <input type="checkbox" id="audio-onload" onchange="window.updateAudioOnLoad(this.checked)">
                 </div>
             </div>
             <span class="prop-label">AUDIO VOLUME</span>
-            <input type="range" id="audio-vol" min="0" max="1" step="0.01" value="1" oninput="window['\x5f\x30\x78\x61\x76'](this.value)">
+            <input type="range" id="audio-vol" min="0" max="1" step="0.01" value="1" oninput="window.updateAudioVol(this.value)">
+
             <div style="margin: 10px 0; display: flex; align-items: center; justify-content: space-between; background: #222; padding: 8px; border-radius: 4px;">
                 <span style="font-size: 10px; color: #888; font-weight: bold;">COLLISION</span>
-                <input type="checkbox" id="collision-toggle" checked onchange="window['\x5f\x30\x78\x63\x6c'](this.checked)">
+                <input type="checkbox" id="collision-toggle" checked onchange="window.updateCollision(this.checked)">
             </div>
-            <textarea id="script-area" spellcheck="false" placeholder="// Custom JS (Runs only in Export)" oninput="window['\x5f\x30\x78\x73\x63'](this.value)"></textarea>
-            <input type="color" id="clr" style="width:100%; height: 35px; border:none; margin-top:10px;" oninput="window['\x5f\x30\x78\x63\x72'](this.value)">
-            <button class="spawn-btn" style="background:#822; margin-top:20px;" onclick="window['\x5f\x30\x78\x64\x6c']()">Delete Object</button>
+
+            <textarea id="script-area" spellcheck="false" placeholder="// Custom JS (Runs only in Export)" oninput="window.updateScript(this.value)"></textarea>
+            <input type="color" id="clr" style="width:100%; height: 35px; border:none; margin-top:10px;" oninput="window.updateColor(this.value)">
+            <button class="spawn-btn" style="background:#822; margin-top:20px;" onclick="window.del()">Delete Object</button>
         </div>
     </div>
+
     <script id="saved-data">window.SCENE_DATA = []; window.IS_GAME = false;</script>
-    <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }</script>
+
+    <script type="importmap">
+        { "imports": { 
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        } }
+    </script>
+
     <script type="module">
-        import * as _0xT from 'three';
-        import { TransformControls as _0xTC } from 'three/addons/controls/TransformControls.js';
-        import { GLTFLoader as _0xGL } from 'three/addons/loaders/GLTFLoader.js';
+        import * as THREE from 'three';
+        import { TransformControls } from 'three/addons/controls/TransformControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-        const _0x1 = _0xT, _0x2 = _0xTC, _0x3 = _0xGL;
-
-        class _0xNX {
+        class NexusEngine {
             constructor() {
-                this._e = []; this._p = []; this._s = null; this._cb = null; this._pc = null;
-                this._i = { x: 0, z: 0 }; this._lk = new _0x1.Euler(-0.4, 0, 0, '\x59\x58\x5a');
-                this._ck = new _0x1.Clock(); this._dg = false; this._vl = new _0x1.Vector3(0, 0, 0);
-                this._gv = -25.0; this._js = 10.0; this._ig = false; this._rc = new _0x1.Raycaster();
-                this._ms = new _0x1.Vector2(); this._ld = new _0x3(); this._tl = new _0x1.TextureLoader();
-                this._tl.setCrossOrigin('\x61\x6e\x6f\x6e\x79\x6d\x6f\x75\x73');
-                this._al = new _0x1.AudioLoader(); this._as = new _0x1.AudioListener();
-                this._it(); this._lD();
+                this.entities = [];
+                this.particles = [];
+                this.selected = null;
+                this.clipboard = null;
+                this.playerChar = null;
+                this.input = { x: 0, z: 0 };
+                this.look = new THREE.Euler(-0.4, 0, 0, 'YXZ');
+                this.clock = new THREE.Clock();
+                this.isDraggingGizmo = false;
+                
+                this.velocity = new THREE.Vector3(0, 0, 0);
+                this.gravity = -25.0;
+                this.jumpStrength = 10.0;
+                this.isGrounded = false;
+                this.raycaster = new THREE.Raycaster();
+                this.mouse = new THREE.Vector2();
+
+                this.loader = new GLTFLoader();
+                this.texLoader = new THREE.TextureLoader();
+                this.texLoader.setCrossOrigin('anonymous');
+                this.audioLoader = new THREE.AudioLoader();
+                this.audioListener = new THREE.AudioListener();
+                
+                this.init();
+                this.loadData();
             }
 
-            _it() {
-                const _c = document.getElementById('\x73\x63\x65\x6e\x65\x2d\x63\x61\x6e\x76\x61\x73');
-                const _v = document.getElementById('\x76\x69\x65\x77\x70\x6f\x72\x74');
-                this._sn = new _0x1.Scene(); this._sn.background = new _0x1.Color(0xd9efff);
-                this._cm = new _0x1.PerspectiveCamera(60, _v.clientWidth / _v.clientHeight, 0.1, 1000);
-                this._cm.position.set(0, 20, 30); this._cm.add(this._as);
-                this._rd = new _0x1.WebGLRenderer({ canvas: _c, antialias: true });
-                this._rd.setPixelRatio(window.devicePixelRatio);
-                this._rd.shadowMap.enabled = true; this._rd.shadowMap.type = _0x1.PCFSoftShadowMap;
-                this._gd = new _0x1.GridHelper(100, 50, 0x888888, 0x444444); this._sn.add(this._gd);
-                this._sn.add(new _0x1.AmbientLight(0xffffff, 0.7));
-                this._su = new _0x1.DirectionalLight(0xffffff, 1);
-                this._su.position.set(15, 30, 15); this._su.castShadow = true;
-                this._su.shadow.mapSize.width = 1024; this._su.shadow.mapSize.height = 1024;
-                this._su.shadow.camera.left = -50; this._su.shadow.camera.right = 50;
-                this._su.shadow.camera.top = 50; this._su.shadow.camera.bottom = -50;
-                this._sn.add(this._su);
+            init() {
+                const cvs = document.getElementById('scene-canvas');
+                const vp = document.getElementById('viewport');
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0xd9efff);
+                this.camera = new THREE.PerspectiveCamera(60, vp.clientWidth/vp.clientHeight, 0.1, 1000);
+                this.camera.position.set(0, 20, 30);
+                this.camera.add(this.audioListener);
+
+                this.renderer = new THREE.WebGLRenderer({ canvas: cvs, antialias: true });
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+                this.grid = new THREE.GridHelper(100, 50, 0x888888, 0x444444);
+                this.scene.add(this.grid);
+                this.scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+                this.sun = new THREE.DirectionalLight(0xffffff, 1);
+                this.sun.position.set(15, 30, 15);
+                this.sun.castShadow = true;
+                this.sun.shadow.mapSize.width = 1024;
+                this.sun.shadow.mapSize.height = 1024;
+                this.sun.shadow.camera.left = -50;
+                this.sun.shadow.camera.right = 50;
+                this.sun.shadow.camera.top = 50;
+                this.sun.shadow.camera.bottom = -50;
+                this.scene.add(this.sun);
 
                 if (!window.IS_GAME) {
-                    this._ct = new _0x2(this._cm, this._rd.domElement);
-                    this._ct.addEventListener('\x64\x72\x61\x67\x67\x69\x6e\x67\x2d\x63\x68\x61\x6e\x67\x65\x64', (e) => { this._dg = e.value; });
-                    this._sn.add(this._ct);
+                    this.controls = new TransformControls(this.camera, this.renderer.domElement);
+                    this.controls.addEventListener('dragging-changed', (e) => { this.isDraggingGizmo = e.value; });
+                    this.scene.add(this.controls);
                 } else {
-                    this._gd.visible = false;
-                    document.getElementById('\x6a\x6f\x79\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72').style.display = '\x62\x6c\x6f\x63\x6b';
-                    const _ov = document.getElementById('\x73\x74\x61\x72\x74\x2d\x6f\x76\x65\x72\x6c\x61\x79');
-                    _ov.style.display = '\x66\x6c\x65\x78';
-                    _ov.onclick = () => {
-                        this._as.context.resume().then(() => {
-                            this._e.forEach(e => {
-                                if (e.userData.sound && (e.userData.audioOnLoad || e.userData.audioMode === '\x73\x70\x61\x74\x69\x61\x6c') && !e.userData.sound.isPlaying) e.userData.sound.play();
+                    this.grid.visible = false;
+                    document.getElementById('joy-container').style.display = 'block';
+                    
+                    const overlay = document.getElementById('start-overlay');
+                    overlay.style.display = 'flex';
+                    overlay.onclick = () => {
+                        this.audioListener.context.resume().then(() => {
+                            this.entities.forEach(e => {
+                                if (e.userData.sound && (e.userData.audioOnLoad || e.userData.audioMode === 'spatial') && !e.userData.sound.isPlaying) {
+                                    e.userData.sound.play();
+                                }
                             });
                         });
-                        _ov.style.display = '\x6e\x6f\x6e\x65';
+                        overlay.style.display = 'none';
                     };
                 }
-                this._sI(); this._sM(); this._bG();
-                window.addEventListener('\x72\x65\x73\x69\x7a\x65', () => this._rz());
-                setTimeout(() => this._rz(), 50); this._an();
+
+                this.setupInput();
+                this.setupMouseLook();
+                this.bindGlobals();
+                window.addEventListener('resize', () => this.resize());
+                setTimeout(() => this.resize(), 50);
+                this.animate();
             }
 
-            _bG() {
-                window.resumeAudio = () => { if (this._as.context.state === '\x73\x75\x73\x70\x65\x6e\x64\x65\x64') this._as.context.resume(); };
-                window['\x5f\x30\x78\x61\x31'] = (m) => { if (this._ct) this._ct.setMode(m); document.querySelectorAll('\x2e\x74\x6f\x6f\x6c\x2d\x62\x74\x6e').forEach(b => b.classList.remove('\x61\x63\x74\x69\x76\x65')); document.getElementById(`btn-${m}`).classList.add('\x61\x63\x74\x69\x76\x65'); };
-                window['\x5f\x30\x78\x61\x32'] = () => { const j = document.getElementById('\x6a\x6f\x79\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72'); j.style.display = (j.style.display === '\x62\x6c\x6f\x63\x6b') ? '\x6e\x6f\x6e\x65' : '\x62\x6c\x6f\x63\x6b'; };
-                window.spawn = (t, d) => this._sp(t, d);
-                window['\x5f\x30\x78\x63\x6c'] = (v) => { if(this._s) this._s.userData.hasCollision = v; };
-                window['\x5f\x30\x78\x73\x63'] = (v) => { if(this._s) this._s.userData.script = v; };
-                window['\x5f\x30\x78\x70\x68'] = (v) => { if(this._s) this._s.userData.physics = v; };
-                window['\x5f\x30\x78\x74\x72'] = (v) => { if(this._s) this._s.userData.trigger = v; };
-                window['\x5f\x30\x78\x74\x66'] = (t, v) => { if(!this._s) return; if(t === '\x73\x63\x61\x6c\x65') this._s.scale.set(v, v, v); if(t === '\x72\x6f\x74\x59') this._s.rotation.y = v; };
-                window['\x5f\x30\x78\x63\x72'] = (c) => { if(!this._s) return; this._s.userData.color = c; if(this._s.userData.type === '\x4a\x75\x6d\x70\x42\x75\x74\x74\x6f\x6e') { document.getElementById('\x6a\x75\x6d\x70\x2d\x62\x74\x6e\x2d\x75\x69').style.backgroundColor = c; } else if(this._s.isLight) { this._s.color.set(c); } else if(this._s.material) { this._s.material.color.set(c); } };
-                window['\x5f\x30\x78\x64\x6c'] = () => { if(!this._s) return; if(this._s.userData.type === '\x4a\x75\x6d\x70\x42\x75\x74\x74\x6f\x6e') document.getElementById('\x6a\x75\x6d\x70\x2d\x62\x74\x6e\x2d\x75\x69').style.display = '\x6e\x6f\x6e\x65'; if(this._s.userData.sound) this._s.userData.sound.stop(); this._sn.remove(this._s); this._e = this._e.filter(e => e !== this._s); if(this._ct) this._ct.detach(); this._s = null; document.getElementById('\x74\x72\x61\x6e\x73\x66\x6f\x72\x6d\x2d\x70\x61\x6e\x65\x6c').style.display = '\x6e\x6f\x6e\x65'; this._uH(); };
-                window['\x5f\x30\x78\x65\x78'] = () => this._ex();
-                window['\x5f\x30\x78\x73\x76'] = () => { const n = document.getElementById('\x70\x72\x6f\x6a\x2d\x6e\x61\x6d\x65').value; if(!n) return alert("\x45\x6e\x74\x65\x72\x20\x70\x72\x6f\x6a\x65\x63\x74\x20\x6e\x61\x6d\x65"); const d = this._e.map(e => ({ type: e.userData.type, name: e.name, pos: e.position, rot: {x:e.rotation.x, y:e.rotation.y, z:e.rotation.z}, scl: e.scale, color: e.userData.color || null, hasCollision: e.userData.hasCollision !== false, physics: e.userData.physics || '\x73\x74\x61\x74\x69\x63', trigger: e.userData.trigger || '\x6e\x6f\x6e\x65', script: e.userData.script || "", texUrl: e.userData.texUrl || "", modelUrl: e.userData.modelUrl || "", transparency: e.userData.transparency || 0, audioUrl: e.userData.audioUrl || "", audioMode: e.userData.audioMode || "\x73\x70\x61\x74\x69\x61\x6c", audioVol: e.userData.audioVol ?? 1, audioLoop: e.userData.audioLoop !== false, audioOnLoad: e.userData.audioOnLoad || false, fxType: e.userData.fxType || '\x66\x69\x72\x65', heightMap: e.userData.heightMap || null })); localStorage.setItem("\x4e\x45\x58\x55\x53\x5f\x53\x41\x56\x45\x5f" + n, JSON.stringify(d)); alert("\x50\x72\x6f\x6a\x65\x63\x74\x20\x53\x61\x76\x65\x64\x21"); };
-                window['\x5f\x30\x78\x6c\x64'] = () => { const n = document.getElementById('\x70\x72\x6f\x6a\x2d\x6e\x61\x6d\x65').value; const s = localStorage.getItem("\x4e\x45\x58\x55\x53\x5f\x53\x41\x56\x45\x5f" + n); if(!s) return alert("\x50\x72\x6f\x6a\x65\x63\x74\x20\x6e\x6f\x74\x20\x66\x6f\x75\x6e\x64"); this._e.forEach(e => this._sn.remove(e)); this._e = []; JSON.parse(s).forEach(d => this._sp(d.type, d)); };
-                window['\x5f\x30\x78\x65\x31'] = () => { const c = parseInt(document.getElementById('\x73\x6b\x79\x2d\x74\x79\x70\x65').value); this._sn.background.setHex(c); };
-                window['\x5f\x30\x78\x65\x32'] = (v) => { this._su.color.set(v); };
-                window['\x5f\x30\x78\x65\x33'] = (v) => { if(v > 0) this._sn.fog = new _0x1.FogExp2(this._sn.background, v); else this._sn.fog = null; };
-                window['\x5f\x30\x78\x65\x34'] = () => { this._rd.shadowMap.enabled = !this._rd.shadowMap.enabled; this._e.forEach(e => { const r = (o) => { if(o.material) o.material.needsUpdate = true; if(o.children) o.children.forEach(r); }; r(e); }); };
-                window['\x5f\x30\x78\x62\x32'] = () => { if(!this._s) return; this._cb = JSON.parse(JSON.stringify({ type: this._s.userData.type, pos: this._s.position, rot: {x:this._s.rotation.x, y:this._s.rotation.y, z:this._s.rotation.z}, scl: this._s.scale, color: this._s.userData.color || null, hasCollision: this._s.userData.hasCollision, physics: this._s.userData.physics, trigger: this._s.userData.trigger, script: this._s.userData.script, texUrl: this._s.userData.texUrl, modelUrl: this._s.userData.modelUrl, transparency: this._s.userData.transparency, audioUrl: this._s.userData.audioUrl, audioMode: this._s.userData.audioMode, audioVol: this._s.userData.audioVol, audioLoop: this._s.userData.audioLoop, audioOnLoad: this._s.userData.audioOnLoad, fxType: this._s.userData.fxType, heightMap: this._s.userData.heightMap })); };
-                window['\x5f\x30\x78\x62\x33'] = () => { if(!this._cb) return; const d = JSON.parse(JSON.stringify(this._cb)); d.pos.x += 1; d.pos.z += 1; this._sp(d.type, d); };
-                window['\x5f\x30\x78\x62\x34'] = () => { if(this._s) { window['\x5f\x30\x78\x62\x32'](); window['\x5f\x30\x78\x62\x33'](); } };
-                window['\x5f\x30\x78\x74\x78'] = (u) => { if(!this._s) return; this._tl.load(u, (t) => { t.colorSpace = _0x1.SRGBColorSpace; t.wrapS = _0x1.RepeatWrapping; t.wrapT = _0x1.RepeatWrapping; if(this._s.userData.type === '\x54\x65\x72\x72\x61\x69\x6e') t.repeat.set(10, 10); const a = (o) => { if(o.material) { o.material.map = t; o.material.color.set(0xffffff); o.material.needsUpdate = true; } o.children.forEach(a); }; a(this._s); this._s.userData.texUrl = u; }); };
-                window['\x5f\x30\x78\x6d\x64'] = (u) => { if(!this._s) return; this._ld.load(u, (g) => { const m = g.scene; m.position.copy(this._s.position); m.rotation.copy(this._s.rotation); m.scale.copy(this._s.scale); m.userData = {...this._s.userData, modelUrl: u}; m.name = this._s.name; this._sn.remove(this._s); this._e = this._e.filter(e => e !== this._s); this._sn.add(m); this._e.push(m); this._sl(m); }); };
-                window['\x5f\x30\x78\x74\x70'] = (v) => { if(!this._s) return; const a = parseFloat(v); if(this._s.userData.type === '\x4a\x75\x6d\x70\x42\x75\x74\x74\x6f\x6e') { document.getElementById('\x6a\x75\x6d\x70\x2d\x62\x74\x6e\x2d\x75\x69').style.opacity = 1 - a; } else { const r = (o) => { if (o.material) { o.material.transparent = a > 0; o.material.opacity = 1 - a; o.material.needsUpdate = true; } if (o.children) o.children.forEach(r); }; r(this._s); } this._s.userData.transparency = a; };
-                window['\x5f\x30\x78\x61\x75'] = (i) => { if (!i.files || !i.files[0] || !this._s) return; const r = new FileReader(); r.onload = (e) => { window['\x5f\x30\x78\x75\x61'](e.target.result); }; r.readAsDataURL(i.files[0]); };
-                window['\x5f\x30\x78\x75\x61'] = (u) => { if(!this._s) return; if(this._s.userData.sound) { if(this._s.userData.sound.isPlaying) this._s.userData.sound.stop(); this._s.remove(this._s.userData.sound); this._s.userData.sound = null; } this._s.userData.audioUrl = u; if(!u) return; const s = new _0x1.PositionalAudio(this._as); this._al.load(u, (b) => { s.setBuffer(b); s.setRefDistance(5); s.setVolume(this._s.userData.audioVol ?? 1); s.setLoop(this._s.userData.audioLoop !== false); if(this._s.userData.audioMode === '\x73\x70\x61\x74\x69\x61\x6c' || this._s.userData.audioOnLoad) s.play(); }); this._s.add(s); this._s.userData.sound = s; };
-                window['\x5f\x30\x78\x61\x6d'] = (m) => { if(this._s) this._s.userData.audioMode = m; };
-                window['\x5f\x30\x78\x61\x6c'] = (v) => { if(this._s) { this._s.userData.audioLoop = v; if(this._s.userData.sound) this._s.userData.sound.setLoop(v); } };
-                window['\x5f\x30\x78\x61\x6f'] = (v) => { if(this._s) this._s.userData.audioOnLoad = v; };
-                window['\x5f\x30\x78\x61\x76'] = (v) => { if(this._s) { const vl = parseFloat(v); this._s.userData.audioVol = vl; if(this._s.userData.sound) this._s.userData.sound.setVolume(vl); } };
-                window['\x5f\x30\x78\x66\x78'] = (t) => { if(this._s && this._s.userData.type === '\x50\x61\x72\x74\x69\x63\x6c\x65\x45\x6d\x69\x74\x74\x65\x72') this._s.userData.fxType = t; };
-            }
-
-            _sp(t, d = null) {
-                const _b = (m) => {
-                    m.userData = { type: t, physics: d?.physics || '\x73\x74\x61\x74\x69\x63', trigger: d?.trigger || '\x6e\x6f\x6e\x65', script: d?.script || "", hasCollision: d?.hasCollision !== false, vel: new _0x1.Vector3(0,0,0), transparency: d?.transparency || 0, audioUrl: d?.audioUrl || "", audioMode: d?.audioMode || "\x73\x70\x61\x74\x69\x61\x6c", audioVol: d?.audioVol ?? 1, audioLoop: d?.audioLoop !== false, audioOnLoad: d?.audioOnLoad || false, texUrl: d?.texUrl || "", modelUrl: d?.modelUrl || "", fxType: d?.fxType || '\x66\x69\x72\x65', heightMap: d?.heightMap || null, color: d?.color || null };
-                    m.name = d?.name || `${t}_${this._e.length}`; m.castShadow = true; m.receiveShadow = true;
-                    if(t === '\x54\x65\x72\x72\x61\x69\x6e') { const p = m.geometry.attributes.position; if(d?.heightMap) { for(let i=0; i<p.count; i++) p.setZ(i, d.heightMap[i]); } m.geometry.computeVertexNormals(); }
-                    if (d) {
-                        m.position.copy(d.pos); m.rotation.set(d.rot.x, d.rot.y, d.rot.z); m.scale.copy(d.scl);
-                        if(d.color) { if(t === '\x4a\x75\x6d\x70\x42\x75\x74\x74\x6f\x6e') document.getElementById('\x6a\x75\x6d\x70\x2d\x62\x74\x6e\x2d\x75\x69').style.backgroundColor = d.color; else if(m.material) m.material.color.set(d.color); }
-                        if(d.texUrl) { this._tl.load(d.texUrl, (tx) => { tx.colorSpace = _0x1.SRGBColorSpace; tx.wrapS = _0x1.RepeatWrapping; tx.wrapT = _0x1.RepeatWrapping; if(t === '\x54\x65\x72\x72\x61\x69\x6e') tx.repeat.set(10, 10); const a = (o) => { if(o.material) { o.material.map = tx; o.material.color.set(0xffffff); o.material.needsUpdate = true; } o.children.forEach(a); }; a(m); }); }
-                        if (d.audioUrl) { const s = new _0x1.PositionalAudio(this._as); this._al.load(d.audioUrl, (b) => { s.setBuffer(b); s.setRefDistance(5); s.setVolume(m.userData.audioVol ?? 1); s.setLoop(m.userData.audioLoop !== false); m.add(s); m.userData.sound = s; }); }
-                    } else if (t !== '\x4a\x75\x6d\x70\x42\x75\x74\x74\x6f\x6e') { m.position.set(0, (t === '\x43\x68\x61\x72\x61\x63\x74\x65\x72' ? 1.1 : 0.5), 0); }
-                    if (t === '\x4a\x75\x6d\x70\x42\x75\x74\x74\x6f\x6e') { document.getElementById('\x6a\x75\x6d\x70\x2d\x62\x74\x6e\x2d\x75\x69').style.display = '\x66\x6c\x65\x78'; m.visible = false; }
-                    if (t === '\x43\x68\x61\x72\x61\x63\x74\x65\x72') this._pc = m;
-                    this._sn.add(m); this._e.push(m); this._uH(); if (!window.IS_GAME) this._sl(m);
+            bindGlobals() {
+                window.resumeAudio = () => { if (this.audioListener.context.state === 'suspended') this.audioListener.context.resume(); };
+                
+                window.handleAudioUpload = (input) => { 
+                    if (!input.files || !input.files[0] || !this.selected) return; 
+                    const reader = new FileReader();
+                    reader.onload = (e) => { window.updateAudio(e.target.result); };
+                    reader.readAsDataURL(input.files[0]);
                 };
-                if (d?.modelUrl) { this._ld.load(d.modelUrl, (g) => _b(g.scene)); }
-                else {
-                    let m;
-                    if (t === '\x50\x6f\x69\x6e\x74\x4c\x69\x67\x68\x74') { m = new _0x1.PointLight(0xffffff, 50, 20); m.add(new _0x1.Mesh(new _0x1.SphereGeometry(0.2), new _0x1.MeshBasicMaterial({color: 0xffff00}))); }
-                    else if (t === '\x43\x68\x61\x72\x61\x63\x74\x65\x72') m = new _0x1.Mesh(new _0x1.CapsuleGeometry(0.5, 1.2, 4, 8), new _0x1.MeshStandardMaterial({ color: 0xff00ff }));
-                    else if (t === '\x54\x65\x72\x72\x61\x69\x6e') { m = new _0x1.Mesh(new _0x1.PlaneGeometry(60, 60, 80, 80), new _0x1.MeshStandardMaterial({ color: 0x55aa55, side: _0x1.DoubleSide })); m.rotation.x = -Math.PI/2; }
-                    else if (t === '\x50\x61\x72\x74\x69\x63\x6c\x65\x45\x6d\x69\x74\x74\x65\x72') { m = new _0x1.Group(); const v = new _0x1.Mesh(new _0x1.SphereGeometry(0.2), new _0x1.MeshBasicMaterial({color: 0xe67e22, wireframe: true})); m.add(v); }
-                    else if (t === '\x43\x75\x62\x65') m = new _0x1.Mesh(new _0x1.BoxGeometry(1, 1, 1), new _0x1.MeshStandardMaterial({ color: 0x007acc }));
-                    else if (t === '\x53\x70\x68\x65\x72\x65') m = new _0x1.Mesh(new _0x1.SphereGeometry(0.7, 32, 32), new _0x1.MeshStandardMaterial({ color: 0x007acc }));
-                    else if (t === '\x4a\x75\x6d\x70\x42\x75\x74\x74\x6f\x6e') m = new _0x1.Group();
-                    _b(m);
-                }
-            }
 
-            _sl(o) {
-                if(window.IS_GAME) return; this._s = o; if(this._ct) this._ct.attach(o);
-                document.getElementById('\x74\x72\x61\x6e\x73\x66\x6f\x72\x6d\x2d\x70\x61\x6e\x65\x6c').style.display = '\x62\x6c\x6f\x63\x6b';
-                document.getElementById('\x73\x65\x6c\x2d\x6e\x61\x6d\x65').innerText = o.name;
-                document.getElementById('\x66\x78\x2d\x63\x6f\x6e\x74\x72\x6f\x6c\x73').style.display = (o.userData.type === '\x50\x61\x72\x74\x69\x63\x6c\x65\x45\x6d\x69\x74\x74\x65\x72') ? '\x62\x6c\x6f\x63\x6b' : '\x6e\x6f\x6e\x65';
-                document.getElementById('\x74\x65\x72\x72\x61\x69\x6e\x2d\x63\x6f\x6e\x74\x72\x6f\x6c\x73').style.display = (o.userData.type === '\x54\x65\x72\x72\x61\x69\x6e') ? '\x62\x6c\x6f\x63\x6b' : '\x6e\x6f\x6e\x65';
-                document.getElementById('\x66\x78\x2d\x74\x79\x70\x65').value = o.userData.fxType || '\x66\x69\x72\x65'; this._uH();
-            }
+                window.spawn = (type, data) => this.spawn(type, data);
+                window.updateCollision = (val) => { if(this.selected) this.selected.userData.hasCollision = val; };
+                window.updateScript = (val) => { if(this.selected) this.selected.userData.script = val; };
+                window.updatePhysicsMode = (val) => { if(this.selected) this.selected.userData.physics = val; };
+                window.updateTrigger = (val) => { if(this.selected) this.selected.userData.trigger = val; };
+                window.setTool = (mode) => { if (this.controls) this.controls.setMode(mode); document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active')); document.getElementById(`btn-${mode}`).classList.add('active'); };
+                window.toggleJoy = () => { const j = document.getElementById('joy-container'); j.style.display = (j.style.display === 'block') ? 'none' : 'block'; };
+                window.exportProject = () => this.export();
+                
+                window.applyTexture = (url) => { if(!this.selected) return; this.texLoader.load(url, (tex) => { 
+                    tex.colorSpace = THREE.SRGBColorSpace;
+                    tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+                    if(this.selected.userData.type === 'Terrain') tex.repeat.set(10, 10);
+                    const app = (o) => { if(o.material) { o.material.map = tex; o.material.color.set(0xffffff); o.material.needsUpdate = true; } o.children.forEach(app); }; app(this.selected); this.selected.userData.texUrl = url; 
+                }); };
 
-            _uH() {
-                const l = document.getElementById('\x65\x6e\x74\x69\x74\x79\x2d\x6c\x69\x73\x74'); if(!l) return; l.innerHTML = '';
-                this._e.forEach(e => {
-                    const i = document.createElement('\x64\x69\x76');
-                    i.className = `list-item ${this._s === e ? 'selected-item' : ''}`;
-                    i.innerText = e.name; i.onclick = () => this._sl(e); l.appendChild(i);
-                });
-            }
-
-            _sT(p, u = true) {
-                if(!this._s || this._s.userData.type !== '\x54\x65\x72\x72\x61\x69\x6e') return;
-                const g = this._s.geometry; const a = g.attributes.position;
-                const r = parseFloat(document.getElementById('\x73\x63\x75\x6c\x70\x74\x2d\x72\x61\x64\x69\x75\x73').value);
-                const s = (u ? 0.3 : -0.3); const l = this._s.worldToLocal(p.clone()); let c = false;
-                for (let i = 0; i < a.count; i++) {
-                    const vx = a.getX(i), vy = a.getY(i);
-                    const d = Math.sqrt(Math.pow(vx - l.x, 2) + Math.pow(vy - l.y, 2));
-                    if (d < r) { const f = 1.0 - (d/r); a.setZ(i, a.getZ(i) + (s * f)); c = true; }
-                }
-                if(c) { a.needsUpdate = true; g.computeVertexNormals(); this._s.userData.heightMap = Array.from(a.array).filter((_, i) => i % 3 === 2); }
-            }
-
-            _sI() {
-                const c = document.getElementById('\x6a\x6f\x79\x2d\x63\x6f\x6e\x74\x61\x69\x6e\x65\x72'), k = document.getElementById('\x6a\x6f\x79\x2d\x6b\x6e\x6f\x62'), j = document.getElementById('\x6a\x75\x6d\x70\x2d\x62\x74\x6e\x2d\x75\x69');
-                c.addEventListener('\x74\x6f\x75\x63\x68\x73\x74\x61\x72\x74', (e) => { e.stopPropagation(); this._aj = true; this._tj = e.changedTouches[0].identifier; window.resumeAudio(); }, {passive:false});
-                c.addEventListener('\x74\x6f\x75\x63\x68\x6d\x6f\x76\x65', (e) => {
-                    if(!this._aj) return; e.preventDefault(); let t = Array.from(e.touches).find(t => t.identifier === this._tj); if(!t) return;
-                    const r = c.getBoundingClientRect(); const dx = t.clientX - (r.left + 50), dy = t.clientY - (r.top + 50);
-                    const d = Math.min(Math.sqrt(dx*dx+dy*dy), 40), a = Math.atan2(dy, dx);
-                    k.style.transform = `translate(${Math.cos(a)*d}px, ${Math.sin(a)*d}px)`;
-                    this._i = { x: (Math.cos(a)*d)/40, z: (Math.sin(a)*d)/40 };
-                }, {passive:false});
-                c.addEventListener('\x74\x6f\x75\x63\x68\x65\x6e\x64', (e) => { if(Array.from(e.changedTouches).some(t => t.identifier === this._tj)) { this._aj = false; k.style.transform = ''; this._i = { x: 0, z: 0 }; } });
-                j.addEventListener('\x74\x6f\x75\x63\x68\x73\x74\x61\x72\x74', (e) => { e.stopPropagation(); if (this._ig) this._vl.y = this._js; window.resumeAudio(); });
-            }
-
-            _sM() {
-                const v = document.getElementById('\x76\x69\x65\x77\x70\x6f\x72\x74'); let lt = null, lp = { x: 0, y: 0 }, sp = { x: 0, y: 0 };
-                v.addEventListener('\x74\x6f\x75\x63\x68\x73\x74\x61\x72\x74', (e) => {
-                    const t = e.changedTouches[0]; if (this._dg || (this._aj && t.identifier === this._tj)) return; if (e.target.id !== '\x73\x63\x65\x6e\x65\x2d\x63\x61\x6e\x76\x61\x73') return;
-                    lt = t.identifier; lp = { x: t.clientX, y: t.clientY }; sp = { x: t.clientX, y: t.clientY };
-                }, {passive: false});
-                v.addEventListener('\x74\x6f\x75\x63\x68\x6d\x6f\x76\x65', (e) => {
-                    const t = Array.from(e.touches).find(t => t.identifier === lt); if (!t) return;
-                    const sm = document.getElementById('\x73\x63\x75\x6c\x70\x74\x2d\x6d\x6f\x64\x65')?.value;
-                    if (sm !== '\x6e\x6f\x6e\x65' && this._s?.userData.type === '\x54\x65\x72\x72\x61\x69\x6e') {
-                         const r = v.getBoundingClientRect(); this._ms.x = ((t.clientX - r.left) / v.clientWidth) * 2 - 1; this._ms.y = -((t.clientY - r.top) / v.clientHeight) * 2 + 1;
-                         this._rc.setFromCamera(this._ms, this._cm); const h = this._rc.intersectObject(this._s); if(h.length > 0) this._sT(h[0].point, sm === '\x75\x70');
+                window.applyModel = (url) => { if(!this.selected) return; this.loader.load(url, (gltf) => { const model = gltf.scene; model.position.copy(this.selected.position); model.rotation.copy(this.selected.rotation); model.scale.copy(this.selected.scale); model.userData = {...this.selected.userData, modelUrl: url}; model.name = this.selected.name; this.scene.remove(this.selected); this.entities = this.entities.filter(e => e !== this.selected); this.scene.add(model); this.entities.push(model); this.select(model); }); };
+                window.updateTransform = (type, val) => { if(!this.selected) return; if(type === 'scale') this.selected.scale.set(val, val, val); if(type === 'rotY') this.selected.rotation.y = val; };
+                window.updateTransparency = (val) => { 
+                    if(!this.selected) return; 
+                    const alpha = parseFloat(val); 
+                    if(this.selected.userData.type === 'JumpButton') {
+                        document.getElementById('jump-btn-ui').style.opacity = 1 - alpha;
                     } else {
-                        this._lk.y -= (t.clientX - lp.x) * 0.008; this._lk.x -= (t.clientY - lp.y) * 0.008;
-                        this._lk.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, this._lk.x)); lp = { x: t.clientX, y: t.clientY };
+                        const applyTo = (obj) => { if (obj.material) { obj.material.transparent = alpha > 0; obj.material.opacity = 1 - alpha; obj.material.needsUpdate = true; } if (obj.children) obj.children.forEach(applyTo); }; applyTo(this.selected); 
+                    }
+                    this.selected.userData.transparency = alpha; 
+                };
+                window.updateAudio = (url) => { if(!this.selected) return; if(this.selected.userData.sound) { if(this.selected.userData.sound.isPlaying) this.selected.userData.sound.stop(); this.selected.remove(this.selected.userData.sound); this.selected.userData.sound = null; } this.selected.userData.audioUrl = url; if(!url) return; const sound = new THREE.PositionalAudio(this.audioListener); this.audioLoader.load(url, (buffer) => { sound.setBuffer(buffer); sound.setRefDistance(5); sound.setVolume(this.selected.userData.audioVol ?? 1); sound.setLoop(this.selected.userData.audioLoop !== false); if(this.selected.userData.audioMode === 'spatial' || this.selected.userData.audioOnLoad) sound.play(); }); this.selected.add(sound); this.selected.userData.sound = sound; };
+                window.updateAudioMode = (mode) => { if(!this.selected) return; this.selected.userData.audioMode = mode; };
+                window.updateAudioLoop = (val) => { if(!this.selected) return; this.selected.userData.audioLoop = val; if(this.selected.userData.sound) this.selected.userData.sound.setLoop(val); };
+                window.updateAudioOnLoad = (val) => { if(!this.selected) return; this.selected.userData.audioOnLoad = val; };
+                window.updateAudioVol = (val) => { if(!this.selected) return; const vol = parseFloat(val); this.selected.userData.audioVol = vol; if(this.selected.userData.sound) this.selected.userData.sound.setVolume(vol); };
+                window.updateEnv = () => { const color = parseInt(document.getElementById('sky-type').value); this.scene.background.setHex(color); };
+                window.updateSun = (val) => { this.sun.color.set(val); };
+                window.updateFog = (val) => { if(val > 0) this.scene.fog = new THREE.FogExp2(this.scene.background, val); else this.scene.fog = null; };
+                
+                window.toggleShadows = () => { 
+                    this.renderer.shadowMap.enabled = !this.renderer.shadowMap.enabled; 
+                    this.entities.forEach(e => {
+                        const refresh = (obj) => { if(obj.material) obj.material.needsUpdate = true; if(obj.children) obj.children.forEach(refresh); };
+                        refresh(e);
+                    });
+                };
+
+                window.updateFX = (type) => { if(this.selected && this.selected.userData.type === 'ParticleEmitter') this.selected.userData.fxType = type; };
+                window.copyObj = () => { if(!this.selected) return; this.clipboard = JSON.parse(JSON.stringify({ type: this.selected.userData.type, pos: this.selected.position, rot: {x:this.selected.rotation.x, y:this.selected.rotation.y, z:this.selected.rotation.z}, scl: this.selected.scale, color: this.selected.userData.color || null, hasCollision: this.selected.userData.hasCollision, physics: this.selected.userData.physics, trigger: this.selected.userData.trigger, script: this.selected.userData.script, texUrl: this.selected.userData.texUrl, modelUrl: this.selected.userData.modelUrl, transparency: this.selected.userData.transparency, audioUrl: this.selected.userData.audioUrl, audioMode: this.selected.userData.audioMode, audioVol: this.selected.userData.audioVol, audioLoop: this.selected.userData.audioLoop, audioOnLoad: this.selected.userData.audioOnLoad, fxType: this.selected.userData.fxType, heightMap: this.selected.userData.heightMap })); };
+                window.pasteObj = () => { if(!this.clipboard) return; const d = JSON.parse(JSON.stringify(this.clipboard)); d.pos.x += 1; d.pos.z += 1; this.spawn(d.type, d); };
+                window.duplicateObj = () => { if(this.selected) { window.copyObj(); window.pasteObj(); } };
+                window.saveProj = () => { const name = document.getElementById('proj-name').value; if(!name) return alert("Enter project name"); const data = this.entities.map(e => ({ type: e.userData.type, name: e.name, pos: e.position, rot: {x:e.rotation.x, y:e.rotation.y, z:e.rotation.z}, scl: e.scale, color: e.userData.color || null, hasCollision: e.userData.hasCollision !== false, physics: e.userData.physics || 'static', trigger: e.userData.trigger || 'none', script: e.userData.script || "", texUrl: e.userData.texUrl || "", modelUrl: e.userData.modelUrl || "", transparency: e.userData.transparency || 0, audioUrl: e.userData.audioUrl || "", audioMode: e.userData.audioMode || "spatial", audioVol: e.userData.audioVol ?? 1, audioLoop: e.userData.audioLoop !== false, audioOnLoad: e.userData.audioOnLoad || false, fxType: e.userData.fxType || 'fire', heightMap: e.userData.heightMap || null })); localStorage.setItem("NEXUS_SAVE_" + name, JSON.stringify(data)); alert("Project Saved!"); };
+                window.loadProj = () => { const name = document.getElementById('proj-name').value; const saved = localStorage.getItem("NEXUS_SAVE_" + name); if(!saved) return alert("Project not found"); this.entities.forEach(e => this.scene.remove(e)); this.entities = []; JSON.parse(saved).forEach(d => this.spawn(d.type, d)); };
+                window.updateColor = (c) => { 
+                    if(!this.selected) return; 
+                    this.selected.userData.color = c;
+                    if(this.selected.userData.type === 'JumpButton') { 
+                        document.getElementById('jump-btn-ui').style.backgroundColor = c; 
+                    } else if(this.selected.isLight) { 
+                        this.selected.color.set(c); 
+                    } else if(this.selected.material) { 
+                        this.selected.material.color.set(c); 
+                    } 
+                };
+                window.del = () => { if(!this.selected) return; if(this.selected.userData.type === 'JumpButton') { document.getElementById('jump-btn-ui').style.display = 'none'; } if(this.selected.userData.sound) this.selected.userData.sound.stop(); this.scene.remove(this.selected); this.entities = this.entities.filter(e => e !== this.selected); if(this.controls) this.controls.detach(); this.selected = null; document.getElementById('transform-panel').style.display = 'none'; this.updateHierarchy(); };
+            }
+
+            spawn(type, data = null) {
+                const build = (mesh) => {
+                    mesh.userData = { type, physics: data?.physics || 'static', trigger: data?.trigger || 'none', script: data?.script || "", hasCollision: data?.hasCollision !== false, vel: new THREE.Vector3(0,0,0), transparency: data?.transparency || 0, audioUrl: data?.audioUrl || "", audioMode: data?.audioMode || "spatial", audioVol: data?.audioVol ?? 1, audioLoop: data?.audioLoop !== false, audioOnLoad: data?.audioOnLoad || false, texUrl: data?.texUrl || "", modelUrl: data?.modelUrl || "", fxType: data?.fxType || 'fire', heightMap: data?.heightMap || null, color: data?.color || null };
+                    mesh.name = data?.name || `${type}_${this.entities.length}`;
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+
+                    if(type === 'Terrain') {
+                        const pos = mesh.geometry.attributes.position;
+                        if(data?.heightMap) { for(let i=0; i<pos.count; i++) pos.setZ(i, data.heightMap[i]); }
+                        mesh.geometry.computeVertexNormals();
+                    }
+
+                    if (data) {
+                        mesh.position.copy(data.pos); mesh.rotation.set(data.rot.x, data.rot.y, data.rot.z); mesh.scale.copy(data.scl);
+                        if(data.color) { 
+                            if(type === 'JumpButton') document.getElementById('jump-btn-ui').style.backgroundColor = data.color; 
+                            else if(mesh.material) mesh.material.color.set(data.color); 
+                        }
+                        if(data.texUrl) {
+                            this.texLoader.load(data.texUrl, (tex) => {
+                                tex.colorSpace = THREE.SRGBColorSpace;
+                                tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+                                if(type === 'Terrain') tex.repeat.set(10, 10);
+                                const app = (o) => { if(o.material) { o.material.map = tex; o.material.color.set(0xffffff); o.material.needsUpdate = true; } o.children.forEach(app); }; app(mesh);
+                            });
+                        }
+                        
+                        if (data.audioUrl) {
+                             const sound = new THREE.PositionalAudio(this.audioListener);
+                             this.audioLoader.load(data.audioUrl, (buffer) => {
+                                 sound.setBuffer(buffer);
+                                 sound.setRefDistance(5);
+                                 sound.setVolume(mesh.userData.audioVol ?? 1);
+                                 sound.setLoop(mesh.userData.audioLoop !== false);
+                                 mesh.add(sound);
+                                 mesh.userData.sound = sound;
+                             });
+                        }
+
+                    } else if (type !== 'JumpButton') { mesh.position.set(0, (type === 'Character' ? 1.1 : 0.5), 0); }
+                    
+                    if (type === 'JumpButton') {
+                         document.getElementById('jump-btn-ui').style.display = 'flex';
+                         mesh.visible = false;
+                    }
+                    if (type === 'Character') this.playerChar = mesh;
+
+                    this.scene.add(mesh); this.entities.push(mesh); this.updateHierarchy();
+                    if (!window.IS_GAME) this.select(mesh);
+                };
+
+                if (data?.modelUrl) {
+                    this.loader.load(data.modelUrl, (g) => build(g.scene));
+                } else {
+                    let m;
+                    if (type === 'PointLight') { m = new THREE.PointLight(0xffffff, 50, 20); m.add(new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshBasicMaterial({color: 0xffff00}))); }
+                    else if (type === 'Character') m = new THREE.Mesh(new THREE.CapsuleGeometry(0.5, 1.2, 4, 8), new THREE.MeshStandardMaterial({ color: 0xff00ff }));
+                    else if (type === 'Terrain') { m = new THREE.Mesh(new THREE.PlaneGeometry(60, 60, 80, 80), new THREE.MeshStandardMaterial({ color: 0x55aa55, side: THREE.DoubleSide })); m.rotation.x = -Math.PI/2; }
+                    else if (type === 'ParticleEmitter') { m = new THREE.Group(); const vis = new THREE.Mesh(new THREE.SphereGeometry(0.2), new THREE.MeshBasicMaterial({color: 0xe67e22, wireframe: true})); m.add(vis); }
+                    else if (type === 'Cube') m = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x007acc }));
+                    else if (type === 'Sphere') m = new THREE.Mesh(new THREE.SphereGeometry(0.7, 32, 32), new THREE.MeshStandardMaterial({ color: 0x007acc }));
+                    else if (type === 'JumpButton') m = new THREE.Group();
+                    build(m);
+                }
+            }
+
+            select(obj) {
+                if(window.IS_GAME) return;
+                this.selected = obj; if(this.controls) this.controls.attach(obj);
+                document.getElementById('transform-panel').style.display = 'block';
+                document.getElementById('sel-name').innerText = obj.name;
+                document.getElementById('fx-controls').style.display = (obj.userData.type === 'ParticleEmitter') ? 'block' : 'none';
+                document.getElementById('terrain-controls').style.display = (obj.userData.type === 'Terrain') ? 'block' : 'none';
+                document.getElementById('fx-type').value = obj.userData.fxType || 'fire';
+                this.updateHierarchy();
+            }
+
+            updateHierarchy() {
+                const list = document.getElementById('entity-list'); if(!list) return;
+                list.innerHTML = ''; this.entities.forEach(e => {
+                    const item = document.createElement('div');
+                    item.className = `list-item ${this.selected === e ? 'selected-item' : ''}`;
+                    item.innerText = e.name; item.onclick = () => this.select(e);
+                    list.appendChild(item);
+                });
+            }
+
+            createExplosion(pos) {
+                for(let i=0; i<15; i++) {
+                    const p = new THREE.Mesh(new THREE.SphereGeometry(0.1), new THREE.MeshBasicMaterial({color: 0xff4400}));
+                    p.position.copy(pos);
+                    p.userData = { life: 1.0, vel: new THREE.Vector3((Math.random()-0.5)*0.2, Math.random()*0.2, (Math.random()-0.5)*0.2) };
+                    this.scene.add(p); this.particles.push(p);
+                }
+            }
+
+            sculptTerrain(point, up = true) {
+                if(!this.selected || this.selected.userData.type !== 'Terrain') return;
+                const geo = this.selected.geometry;
+                const posAttr = geo.attributes.position;
+                const radius = parseFloat(document.getElementById('sculpt-radius').value);
+                const strength = (up ? 0.3 : -0.3);
+                const localPoint = this.selected.worldToLocal(point.clone());
+                let changed = false;
+                for (let i = 0; i < posAttr.count; i++) {
+                    const vx = posAttr.getX(i), vy = posAttr.getY(i);
+                    const dist = Math.sqrt(Math.pow(vx - localPoint.x, 2) + Math.pow(vy - localPoint.y, 2));
+                    if (dist < radius) {
+                        const falloff = 1.0 - (dist/radius);
+                        posAttr.setZ(i, posAttr.getZ(i) + (strength * falloff));
+                        changed = true;
+                    }
+                }
+                if(changed) {
+                    posAttr.needsUpdate = true; geo.computeVertexNormals();
+                    this.selected.userData.heightMap = Array.from(posAttr.array).filter((_, i) => i % 3 === 2);
+                }
+            }
+
+            setupInput() {
+                const container = document.getElementById('joy-container'), knob = document.getElementById('joy-knob'), jumpBtn = document.getElementById('jump-btn-ui');
+                
+                // Keyboard Support
+                window.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                    const key = e.key.toLowerCase();
+                    if (key === 'w' || key === 'arrowup') this.input.z = -1;
+                    if (key === 's' || key === 'arrowdown') this.input.z = 1;
+                    if (key === 'a' || key === 'arrowleft') this.input.x = -1;
+                    if (key === 'd' || key === 'arrowright') this.input.x = 1;
+                    if (key === ' ' && this.isGrounded) { e.preventDefault(); this.velocity.y = this.jumpStrength; }
+                });
+                window.addEventListener('keyup', (e) => {
+                    const key = e.key.toLowerCase();
+                    if (key === 'w' || key === 's' || key === 'arrowup' || key === 'arrowdown') this.input.z = 0;
+                    if (key === 'a' || key === 'd' || key === 'arrowleft' || key === 'arrowright') this.input.x = 0;
+                });
+
+                container.addEventListener('touchstart', (e) => { e.stopPropagation(); this.activeJoy = true; this.joyTouchId = e.changedTouches[0].identifier; window.resumeAudio(); }, {passive:false});
+                container.addEventListener('touchmove', (e) => {
+                    if(!this.activeJoy) return; e.preventDefault();
+                    let t = Array.from(e.touches).find(t => t.identifier === this.joyTouchId);
+                    if(!t) return;
+                    const rect = container.getBoundingClientRect();
+                    const dx = t.clientX - (rect.left + 50), dy = t.clientY - (rect.top + 50);
+                    const dist = Math.min(Math.sqrt(dx*dx+dy*dy), 40), angle = Math.atan2(dy, dx);
+                    knob.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px)`;
+                    this.input = { x: (Math.cos(angle)*dist)/40, z: (Math.sin(angle)*dist)/40 };
+                }, {passive:false});
+                container.addEventListener('touchend', (e) => { if(Array.from(e.changedTouches).some(t => t.identifier === this.joyTouchId)) { this.activeJoy = false; knob.style.transform = ''; this.input = { x: 0, z: 0 }; } });
+                jumpBtn.addEventListener('touchstart', (e) => { e.stopPropagation(); if (this.isGrounded) this.velocity.y = this.jumpStrength; window.resumeAudio(); });
+            }
+
+            setupMouseLook() {
+                const vp = document.getElementById('viewport');
+                let lookTouchId = null, lastPos = { x: 0, y: 0 };
+                let startTouchPos = { x: 0, y: 0 };
+                let isMouseDown = false;
+
+                // Mouse Drag Support
+                vp.addEventListener('mousedown', (e) => {
+                    if (this.isDraggingGizmo || e.button !== 0) return;
+                    isMouseDown = true;
+                    lastPos = { x: e.clientX, y: e.clientY };
+                    startTouchPos = { x: e.clientX, y: e.clientY };
+                });
+                window.addEventListener('mousemove', (e) => {
+                    if (!isMouseDown) return;
+                    const dx = e.clientX - lastPos.x;
+                    const dy = e.clientY - lastPos.y;
+                    this.look.y -= dx * 0.005;
+                    this.look.x -= dy * 0.005;
+                    this.look.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.look.x));
+                    lastPos = { x: e.clientX, y: e.clientY };
+                });
+                window.addEventListener('mouseup', (e) => {
+                    if (!isMouseDown) return;
+                    const distMove = Math.sqrt(Math.pow(e.clientX - startTouchPos.x, 2) + Math.pow(e.clientY - startTouchPos.y, 2));
+                    if (distMove < 5 && !this.isDraggingGizmo) {
+                        const rect = vp.getBoundingClientRect();
+                        this.mouse.x = ((e.clientX - rect.left) / vp.clientWidth) * 2 - 1;
+                        this.mouse.y = -((e.clientY - rect.top) / vp.clientHeight) * 2 + 1;
+                        this.raycaster.setFromCamera(this.mouse, this.camera);
+                        const intersects = this.raycaster.intersectObjects(this.entities, true);
+                        if (intersects.length > 0) {
+                            let obj = intersects[0].object;
+                            while(obj.parent && !obj.userData.type) obj = obj.parent;
+                            this.select(obj);
+                        }
+                    }
+                    isMouseDown = false;
+                });
+
+                vp.addEventListener('touchstart', (e) => {
+                    const t = e.changedTouches[0];
+                    if (this.isDraggingGizmo || (this.activeJoy && t.identifier === this.joyTouchId)) return;
+                    if (e.target.id !== 'scene-canvas') return;
+                    lookTouchId = t.identifier;
+                    lastPos = { x: t.clientX, y: t.clientY };
+                    startTouchPos = { x: t.clientX, y: t.clientY };
+                }, {passive: false});
+
+                vp.addEventListener('touchmove', (e) => {
+                    const t = Array.from(e.touches).find(t => t.identifier === lookTouchId);
+                    if (!t) return;
+                    const sculptMode = document.getElementById('sculpt-mode')?.value;
+                    if (sculptMode !== 'none' && this.selected?.userData.type === 'Terrain') {
+                         const rect = vp.getBoundingClientRect();
+                         this.mouse.x = ((t.clientX - rect.left) / vp.clientWidth) * 2 - 1;
+                         this.mouse.y = -((t.clientY - rect.top) / vp.clientHeight) * 2 + 1;
+                         this.raycaster.setFromCamera(this.mouse, this.camera);
+                         const hits = this.raycaster.intersectObject(this.selected);
+                         if(hits.length > 0) this.sculptTerrain(hits[0].point, sculptMode === 'up');
+                    } else {
+                        this.look.y -= (t.clientX - lastPos.x) * 0.008;
+                        this.look.x -= (t.clientY - lastPos.y) * 0.008;
+                        this.look.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, this.look.x));
+                        lastPos = { x: t.clientX, y: t.clientY };
                     }
                 }, {passive: false});
-                v.addEventListener('\x74\x6f\x75\x63\x68\x65\x6e\x64', (e) => { 
-                    const t = Array.from(e.changedTouches).find(t => t.identifier === lt);
+
+                vp.addEventListener('touchend', (e) => { 
+                    const t = Array.from(e.changedTouches).find(t => t.identifier === lookTouchId);
                     if(t) {
-                        const dm = Math.sqrt(Math.pow(t.clientX - sp.x, 2) + Math.pow(t.clientY - sp.y, 2));
-                        if(dm < 5 && !this._dg) {
-                            const r = v.getBoundingClientRect(); this._ms.x = ((t.clientX - r.left) / v.clientWidth) * 2 - 1; this._ms.y = -((t.clientY - r.top) / v.clientHeight) * 2 + 1;
-                            this._rc.setFromCamera(this._ms, this._cm); const i = this._rc.intersectObjects(this._e, true);
-                            if (i.length > 0) { let o = i[0].object; while(o.parent && !o.userData.type) o = o.parent; this._sl(o); }
-                            else if (!window.IS_GAME) { this._s = null; if (this._ct) this._ct.detach(); document.getElementById('\x74\x72\x61\x6e\x73\x66\x6f\x72\x6d\x2d\x70\x61\x6e\x65\x6c').style.display = '\x6e\x6f\x6e\x65'; this._uH(); }
+                        const distMove = Math.sqrt(Math.pow(t.clientX - startTouchPos.x, 2) + Math.pow(t.clientY - startTouchPos.y, 2));
+                        if(distMove < 5 && !this.isDraggingGizmo) {
+                            const rect = vp.getBoundingClientRect();
+                            this.mouse.x = ((t.clientX - rect.left) / vp.clientWidth) * 2 - 1;
+                            this.mouse.y = -((t.clientY - rect.top) / vp.clientHeight) * 2 + 1;
+                            this.raycaster.setFromCamera(this.mouse, this.camera);
+                            const intersects = this.raycaster.intersectObjects(this.entities, true);
+                            if (intersects.length > 0) {
+                                let obj = intersects[0].object;
+                                while(obj.parent && !obj.userData.type) obj = obj.parent;
+                                this.select(obj);
+                            } else if (!window.IS_GAME) {
+                                this.selected = null;
+                                if (this.controls) this.controls.detach();
+                                document.getElementById('transform-panel').style.display = 'none';
+                                this.updateHierarchy();
+                            }
                         }
-                        lt = null; 
+                        lookTouchId = null; 
                     }
                 });
             }
 
-            _uP(dt) {
-                if (!this._pc) return; this._vl.y += this._gv * dt;
-                const s = this._e.filter(e => e !== this._pc && e.userData.hasCollision !== false);
-                this._rc.set(this._pc.position.clone(), new _0x1.Vector3(0, -1, 0)); const gh = this._rc.intersectObjects(s, true);
-                this._ig = false; if (gh.length > 0 && gh[0].distance < 1.1) { if (this._vl.y < 0) { this._ig = true; this._vl.y = 0; this._pc.position.y = gh[0].point.y + 1.1; } }
-                if (this._vl.y > 0) { this._rc.set(this._pc.position.clone(), new _0x1.Vector3(0, 1, 0)); const ch = this._rc.intersectObjects(s, true); if (ch.length > 0 && ch[0].distance < 1.1) { this._vl.y = 0; this._pc.position.y = ch[0].point.y - 1.1; } }
-                this._pc.position.y += this._vl.y * dt;
+            updatePhysics(dt) {
+                if (!this.playerChar) return;
+                this.velocity.y += this.gravity * dt;
+                const solids = this.entities.filter(e => e !== this.playerChar && e.userData.hasCollision !== false);
+                this.raycaster.set(this.playerChar.position.clone(), new THREE.Vector3(0, -1, 0));
+                const groundHits = this.raycaster.intersectObjects(solids, true);
+                this.isGrounded = false;
+                if (groundHits.length > 0 && groundHits[0].distance < 1.1) {
+                    if (this.velocity.y < 0) {
+                        this.isGrounded = true;
+                        this.velocity.y = 0;
+                        this.playerChar.position.y = groundHits[0].point.y + 1.1;
+                    }
+                }
+                if (this.velocity.y > 0) {
+                    this.raycaster.set(this.playerChar.position.clone(), new THREE.Vector3(0, 1, 0));
+                    const ceilHits = this.raycaster.intersectObjects(solids, true);
+                    if (ceilHits.length > 0 && ceilHits[0].distance < 1.1) {
+                        this.velocity.y = 0;
+                        this.playerChar.position.y = ceilHits[0].point.y - 1.1;
+                    }
+                }
+                this.playerChar.position.y += this.velocity.y * dt;
             }
 
-            _an() {
-                requestAnimationFrame(() => this._an()); const dt = this._ck.getDelta();
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                const dt = this.clock.getDelta();
                 if (window.IS_GAME) {
-                    this._e.forEach(e => {
-                        if (e.userData?.script) {
-                            try { if (!e.userData._run) e.userData._run = new Function(e.userData.script); e.userData._run.call(e); }
-                            catch(err) { console.error("\x53\x63\x72\x69\x70\x74\x20\x45\x72\x72\x6f\x72", err); }
+                    this.entities.forEach(e => {
+                        if (e.userData && e.userData.script) {
+                            try {
+                                if (!e.userData._run) e.userData._run = new Function(e.userData.script);
+                                e.userData._run.call(e);
+                            } catch(err) { console.error("Script Error on", e.name, err); }
                         }
                     });
                 }
-                this._e.forEach(e => {
-                    if(e.userData.type === '\x50\x61\x72\x74\x69\x63\x6c\x65\x45\x6d\x69\x74\x74\x65\x72') {
-                        const p = new _0x1.Mesh(new _0x1.PlaneGeometry(0.1, 0.1), new _0x1.MeshBasicMaterial({transparent: true, opacity: 0.8}));
-                        if(e.userData.fxType === '\x66\x69\x72\x65') p.material.color.set(0xff4400); else if(e.userData.fxType === '\x73\x6d\x6f\x6b\x65') p.material.color.set(0x444444); else p.material.color.set(0xffffff);
-                        p.position.copy(e.position).add(new _0x1.Vector3((Math.random()-0.5)*0.5, 0, (Math.random()-0.5)*0.5));
-                        p.userData = { life: 1.0, vel: new _0x1.Vector3(0, 0.05 + Math.random()*0.05, 0) }; this._sn.add(p); this._p.push(p);
+                this.entities.forEach(e => {
+                    if(e.userData.type === 'ParticleEmitter') {
+                        const p = new THREE.Mesh(new THREE.PlaneGeometry(0.1, 0.1), new THREE.MeshBasicMaterial({transparent: true, opacity: 0.8}));
+                        if(e.userData.fxType === 'fire') p.material.color.set(0xff4400);
+                        else if(e.userData.fxType === 'smoke') p.material.color.set(0x444444);
+                        else p.material.color.set(0xffffff);
+                        p.position.copy(e.position).add(new THREE.Vector3((Math.random()-0.5)*0.5, 0, (Math.random()-0.5)*0.5));
+                        p.userData = { life: 1.0, vel: new THREE.Vector3(0, 0.05 + Math.random()*0.05, 0) };
+                        this.scene.add(p); this.particles.push(p);
                     }
                 });
-                for(let i = this._p.length-1; i>=0; i--) {
-                    const p = this._p[i]; p.position.add(p.userData.vel); p.userData.life -= 0.02; p.material.opacity = p.userData.life;
-                    if(p.userData.life <= 0) { this._sn.remove(p); this._p.splice(i, 1); }
+                for(let i = this.particles.length-1; i>=0; i--) {
+                    const p = this.particles[i]; p.position.add(p.userData.vel); p.userData.life -= 0.02; p.material.opacity = p.userData.life;
+                    if(p.userData.life <= 0) { this.scene.remove(p); this.particles.splice(i, 1); }
                 }
-                if (window.IS_GAME && this._pc) {
-                    this._uP(dt); this._cm.position.copy(this._pc.position).y += 0.4; this._cm.quaternion.setFromEuler(this._lk);
-                    const f = new _0x1.Vector3(0,0,-1).applyQuaternion(this._cm.quaternion); f.y = 0; f.normalize();
-                    const r = new _0x1.Vector3(1,0,0).applyQuaternion(this._cm.quaternion); r.y = 0; r.normalize();
-                    const mv = new _0x1.Vector3().addScaledVector(f, -this._i.z).addScaledVector(r, this._i.x);
-                    if (mv.length() > 0.01) {
-                        mv.normalize(); const s = this._e.filter(e => e !== this._pc && e.userData.hasCollision !== false);
-                        let cf = false; for(let h of [0.6, -0.6]) {
-                            const o = this._pc.position.clone(); o.y += h; this._rc.set(o, mv); const wh = this._rc.intersectObjects(s, true);
-                            if (wh.length > 0 && wh[0].distance < 0.7) { cf = true; break; }
+                if (window.IS_GAME && this.playerChar) {
+                    this.updatePhysics(dt);
+                    this.camera.position.copy(this.playerChar.position).y += 0.4;
+                    this.camera.quaternion.setFromEuler(this.look);
+                    const fwd = new THREE.Vector3(0,0,-1).applyQuaternion(this.camera.quaternion); fwd.y = 0; fwd.normalize();
+                    const rt = new THREE.Vector3(1,0,0).applyQuaternion(this.camera.quaternion); rt.y = 0; rt.normalize();
+                    const moveVec = new THREE.Vector3().addScaledVector(fwd, -this.input.z).addScaledVector(rt, this.input.x);
+                    if (moveVec.length() > 0.01) {
+                        moveVec.normalize();
+                        const solids = this.entities.filter(e => e !== this.playerChar && e.userData.hasCollision !== false);
+                        let collisionFound = false;
+                        const heights = [0.6, -0.6];
+                        for(let h of heights) {
+                            const origin = this.playerChar.position.clone();
+                            origin.y += h;
+                            this.raycaster.set(origin, moveVec);
+                            const wallHits = this.raycaster.intersectObjects(solids, true);
+                            if (wallHits.length > 0 && wallHits[0].distance < 0.7) {
+                                collisionFound = true;
+                                break;
+                            }
                         }
-                        if (!cf) this._pc.position.addScaledVector(mv, 8 * dt);
+                        if (!collisionFound) this.playerChar.position.addScaledVector(moveVec, 8 * dt);
                     }
-                    this._pc.visible = false;
+                    this.playerChar.visible = false;
                 } else {
-                    this._cm.quaternion.setFromEuler(this._lk);
-                    if(!this._dg && (this._i.z !== 0 || this._i.x !== 0)) { this._cm.translateZ(this._i.z * 20 * dt); this._cm.translateX(this._i.x * 20 * dt); }
+                    this.camera.quaternion.setFromEuler(this.look);
+                    if(!this.isDraggingGizmo && (this.input.z !== 0 || this.input.x !== 0)) { this.camera.translateZ(this.input.z * 20 * dt); this.camera.translateX(this.input.x * 20 * dt); }
                 }
-                this._rd.render(this._sn, this._cm);
+                this.renderer.render(this.scene, this.camera);
             }
 
-            _ex() {
-                const d = this._e.map(e => ({ type: e.userData.type, name: e.name, pos: e.position, rot: {x:e.rotation.x, y:e.rotation.y, z:e.rotation.z}, scl: e.scale, color: e.userData.color, physics: e.userData.physics, trigger: e.userData.trigger, hasCollision: e.userData.hasCollision, script: e.userData.script, texUrl: e.userData.texUrl, modelUrl: e.userData.modelUrl, transparency: e.userData.transparency, audioUrl: e.userData.audioUrl, audioMode: e.userData.audioMode, audioVol: e.userData.audioVol, audioLoop: e.userData.audioLoop, audioOnLoad: e.userData.audioOnLoad, fxType: e.userData.fxType, heightMap: e.userData.heightMap }));
-                const cl = document.documentElement.cloneNode(true); ['hierarchy', 'inspector', 'toolbar'].forEach(id => cl.querySelector(`#${id}`)?.remove());
-                let h = cl.outerHTML.replace(/window\.SCENE_DATA = \[\]; window\.IS_GAME = false;/, `window.SCENE_DATA = ${JSON.stringify(d)}; window.IS_GAME = true;`);
-                const b = new Blob([h], { type: '\x74\x65\x78\x74\x2f\x68\x74\x6d\x6c' });
-                const a = document.createElement('\x61'); a.href = URL.createObjectURL(b); a.download = '\x47\x61\x6d\x65\x2e\x68\x74\x6d\x6c'; a.click();
+            export() {
+                const data = this.entities.map(e => ({ type: e.userData.type, name: e.name, pos: e.position, rot: {x:e.rotation.x, y:e.rotation.y, z:e.rotation.z}, scl: e.scale, color: e.userData.color, physics: e.userData.physics, trigger: e.userData.trigger, hasCollision: e.userData.hasCollision, script: e.userData.script, texUrl: e.userData.texUrl, modelUrl: e.userData.modelUrl, transparency: e.userData.transparency, audioUrl: e.userData.audioUrl, audioMode: e.userData.audioMode, audioVol: e.userData.audioVol, audioLoop: e.userData.audioLoop, audioOnLoad: e.userData.audioOnLoad, fxType: e.userData.fxType, heightMap: e.userData.heightMap }));
+                const docClone = document.documentElement.cloneNode(true);
+                ['hierarchy', 'inspector', 'toolbar'].forEach(id => docClone.querySelector(`#${id}`)?.remove());
+                let htmlStr = docClone.outerHTML.replace(/window\.SCENE_DATA = \[\]; window\.IS_GAME = false;/, `window.SCENE_DATA = ${JSON.stringify(data)}; window.IS_GAME = true;`);
+                const blob = new Blob([htmlStr], { type: 'text/html' });
+                const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Game.html'; a.click();
             }
 
-            _lD() { if (window.SCENE_DATA?.length > 0) window.SCENE_DATA.forEach(d => this._sp(d.type, d)); }
-            _rz() { const v = document.getElementById('\x76\x69\x65\x77\x70\x6f\x72\x74'); this._cm.aspect = v.clientWidth / v.clientHeight; this._cm.updateProjectionMatrix(); this._rd.setSize(v.clientWidth, v.clientHeight); }
+            loadData() { if (window.SCENE_DATA?.length > 0) window.SCENE_DATA.forEach(d => this.spawn(d.type, d)); }
+            resize() { const vp = document.getElementById('viewport'); this.camera.aspect = vp.clientWidth / vp.clientHeight; this.camera.updateProjectionMatrix(); this.renderer.setSize(vp.clientWidth, vp.clientHeight); }
         }
-        new _0xNX();
+        new NexusEngine();
     </script>
 </body>
 </html>
